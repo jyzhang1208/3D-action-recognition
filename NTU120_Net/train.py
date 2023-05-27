@@ -12,7 +12,7 @@ import numpy as np
 
 from model import PointNet_Plus#,Attension_Point,TVLAD
 from dataset import NTU_RGBD
-from utils import group_points,group_points_pro
+from utils import group_points,group_points_3DV
 
 from PIL import Image
 from torch.utils.data import Dataset
@@ -23,7 +23,7 @@ from tqdm import tqdm
 def main(args=None):
 	parser = argparse.ArgumentParser(description = "Training")
 
-	parser.add_argument('--batchSize', type=int, default=64, help='input batch size')
+	parser.add_argument('--batchSize', type=int, default=24, help='input batch size')
 	parser.add_argument('--nepoch', type=int, default=50, help='number of epochs to train for')
 	parser.add_argument('--INPUT_FEATURE_NUM', type=int, default = 8,  help='number of input point features')
 	parser.add_argument('--temperal_num', type=int, default = 3,  help='number of input point features')
@@ -35,9 +35,9 @@ def main(args=None):
 	parser.add_argument('--momentum', type=float, default=0.9, help='momentum (SGD only)')
 	parser.add_argument('--workers', type=int, default=0, help='number of data loading workers')
 
-	parser.add_argument('--root_path', type=str, default='/data/data3/wangyancheng/pointcloudData/NTU_voxelz40_feature_2048',  help='preprocess folder')
-	parser.add_argument('--depth_path', type=str, default='/data/data3/wangyancheng/ntu120dataset/',  help='raw_depth_png')
-	parser.add_argument('--save_root_dir', type=str, default='results_ntu120/NTU60_v40_cv_notransform_MultiStream',  help='output folder')
+	parser.add_argument('--root_path', type=str, default='/home/zjy/3DV-Action/3DV_pointdata/NTU_voxelsize35_split5/',  help='preprocess folder')
+	parser.add_argument('--depth_path', type=str, default='/home/zjy/3DV-Action/data/train_data',  help='raw_depth_png')
+	parser.add_argument('--save_root_dir', type=str, default='/home/zjy/3DV-Action/results_ntu120/NTU60_v40_cv_notransform_MultiStream',  help='output folder')
 	parser.add_argument('--model', type=str, default = '',  help='model name for training resume')
 	parser.add_argument('--optimizer', type=str, default = '',  help='optimizer name for training resume')
 	
@@ -72,7 +72,7 @@ def main(args=None):
 	except OSError:
 		pass
 
-	os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
+	os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 	torch.backends.cudnn.benchmark = True
 	#torch.backends.cudnn.deterministic = True
@@ -94,6 +94,7 @@ def main(args=None):
 		Transform = False
 		)
 	val_loader = DataLoader(dataset = data_val, batch_size = 24,num_workers = 8)
+	# import pdb;pdb.set_trace()
 
 	netR = PointNet_Plus(opt)
 
@@ -115,8 +116,10 @@ def main(args=None):
 		loss_sigma = 0.0
 		total1 = 0.0
 		timer = time.time()
-		
+		# import pdb;
+		# pdb.set_trace()
 		for i, data in enumerate(tqdm(train_loader, 0)):
+
 			if len(data[0])==1:
 				continue
 			torch.cuda.synchronize()
@@ -134,6 +137,7 @@ def main(args=None):
 			xs2, ys2 = group_points(points2_xyz, opt)
 			xs3, ys3 = group_points(points3_xyz, opt)
 
+			# import pdb;pdb.set_trace()
 			prediction = netR(xt, xs1, xs2, xs3, yt, ys1, ys2, ys3)
 
 			loss = criterion(prediction,label)
@@ -149,6 +153,7 @@ def main(args=None):
 
 			acc += (predicted==label).cpu().sum().numpy()
 			total1 += label.size(0)
+			# import pdb;pdb.set_trace()
 
 		
 		acc_avg = acc/total1

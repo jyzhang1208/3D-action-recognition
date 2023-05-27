@@ -16,9 +16,9 @@ But to save storage space, only M frames in each segment are sampled to convert 
 
 
 
-save_path1 = '/NTU_3seg_depthpoint/'
+save_path1 = '../../NTU_3seg_depthpoint/'
 
-root_path = 'ntu120dataset/'
+root_path = '../../data/train_data'
 
 seg_num=3 # 
 M = 5 #
@@ -79,7 +79,7 @@ sub_Files.sort()
 
 for s_fileName in sub_Files:
 
-	videoPath = os.path.join(root_path, s_fileName, 'nturgb+d_depth_masked')
+	videoPath = os.path.join(root_path, s_fileName) # , 'nturgb+d_depth_masked'
 	if os.path.isdir(videoPath):
 		print(s_fileName,'-------')
 		video_Files = os.listdir(videoPath)

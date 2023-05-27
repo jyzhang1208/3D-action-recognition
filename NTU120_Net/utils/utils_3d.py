@@ -123,8 +123,10 @@ def group_points_2_3DV(points, sample_num_level1, sample_num_level2, knn_K, ball
 
     idx_group_l1_long = inputs1_idx.view(cur_train_size,1,sample_num_level2*knn_K).expand(cur_train_size,points.size(1),sample_num_level2*knn_K)
     inputs_level2 = points.gather(2,idx_group_l1_long).view(cur_train_size,points.size(1),sample_num_level2,knn_K) # B*131*128*64
-
+    # import pdb;pdb.set_trace()
     inputs_level2_center = points[:,0:3,0:sample_num_level2].unsqueeze(3)       # B*8*128*1
     inputs_level2[:,0:3,:,:] = inputs_level2[:,0:3,:,:] - inputs_level2_center.expand(cur_train_size,3,sample_num_level2,knn_K) # B*8*128*64
+    # import pdb;
+    # pdb.set_trace()
     return inputs_level2, inputs_level2_center
     # inputs_level2: B*136*sample_num_level2*knn_K; inputs_level2_center: B*8*sample_num_level2*1

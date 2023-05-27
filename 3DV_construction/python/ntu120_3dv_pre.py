@@ -4,7 +4,8 @@ import imageio
 import numpy as np
 import time
 import random
-
+import sys
+sys.path.append("../../")
 
 '''
 due to the ntu120 full depth maps data is not avialable, the action proposal is used by skeleton-based action proposal.  
@@ -24,21 +25,24 @@ SAMPLE_NUM = 2048
 sample_num_level1 = 512
 sample_num_level2 = 128
 K = 60  # max frame limit for temporal rank
-save_path = '/3DV_pointdata/NTU_voxelsize35_split5'
+save_path = '../../3DV_pointdata/NTU_voxelsize35_split5'
 
-try:
-	os.makedirs(save_path)
-except OSError:
-	pass
+
 
 def main():
-	data_path = '/ntu120dataset'
+	data_path = '../../data/train_data'
 	sub_Files = os.listdir(data_path)
 	sub_Files.sort()
 
-	for s_fileName in sub_Files:
+	# try:
+	# os.makedirs(save_path, mode=0o777, exist_ok=True)
+	# except OSError:
+	# 	pass
 
-		videoPath = os.path.join(data_path, s_fileName, 'nturgb+d_depth_masked')
+	for s_fileName in sub_Files:
+		videoPath = os.path.join(data_path, s_fileName) # , 'nturgb+d_depth_masked'
+		# import pdb;
+		# pdb.set_trace()
 		if os.path.isdir(videoPath):
 			print(s_fileName)
 			video_Files = os.listdir(videoPath)

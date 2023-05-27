@@ -3,8 +3,10 @@ import os
 import imageio
 import numpy as np
 
+
 from mayavi import mlab
-file_dir = 'D:\\MY_Paper\\3ddi\\pointclouddemo\\S001C001P001R001A058'
+# os.environ['QT_API']='pyqt5'
+file_dir = '/home/zjy/3DV-Action/data/Drink/S001C001P001R001A001'
 #file_dir = 'F:\\error_samples\\S001C001P002R002A010_34'
 
 fx = 365.481
@@ -171,11 +173,11 @@ xx, yy, zz, cc = xx[index], yy[index], zz[index], cc[index]
     #t=13
     #mlab.view(azimuth= t,distance=180,elevation=88)
     #
-    #name = 'v_voxels_png/frame_' + str(t) + '.png'
+    # name = 'v_voxels_png/frame_' + str(t) + '.png'
 #    print(name)
    # mlab.view(azimuth= 00, elevation=185,distance=140,roll = None)
     mlab.show()
-    #mlab.savefig(filename =name)
+    # mlab.savefig(filename =name)
    # mlab.close()
     #mlab.colorbar()
     #for t in range(10):

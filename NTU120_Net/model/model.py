@@ -170,7 +170,9 @@ class PointNet_Plus(nn.Module):
 
         ###----motion stream--------
         B,d,N,k = xt.shape
-        #xt =xt.view(-1,d,N,k)
+        # xt =xt.view(-1,d,N,k)
+        xt = xt.type(torch.cuda.FloatTensor)
+        # xt = xt.float()
         xt = self.net3DV_1(xt)  
         xt = torch.cat((yt, xt),1).squeeze(-1)
         # B*(4+128)*sample_num_level1
@@ -178,11 +180,17 @@ class PointNet_Plus(nn.Module):
         inputs_level2, inputs_level2_center = group_points_2_3DV(xt, self.sample_num_level1, self.sample_num_level2, self.knn_K, self.ball_radius2)
         # # B*131*sample_num_level2*knn_K, B*3*sample_num_level2*1
         # # B*131*sample_num_level2*knn_K
+        # import pdb;
+        # pdb.set_trace()
+        inputs_level2 = inputs_level2.type(torch.cuda.FloatTensor)
+
+        # inputs_level2 = inputs_level2.reshape(inputs_level2.shape[0], inputs_level2.shape[1], inputs_level2.shape[2], 1)
         xt = self.net3DV_2(inputs_level2)
         # # B*256*sample_num_level2*1
         # print('netR_2:',x1.shape,x1[0,:,4])
         xt = torch.cat((inputs_level2_center, xt),1)
         # # B*259*sample_num_level2*1
+        xt = xt.type(torch.cuda.FloatTensor)
         xt = self.net3DV_3(xt).squeeze(-1).squeeze(-1)
        
 
