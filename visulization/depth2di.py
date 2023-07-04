@@ -6,7 +6,7 @@ import numpy as np
 
 from mayavi import mlab
 # os.environ['QT_API']='pyqt5'
-file_dir = '/home/zjy/3DV-Action/data/Drink/S001C001P001R001A001'
+file_dir = '/home/zjy/3DV-Action/data/train_data/wear_hat/S001C001P001R001A020'
 #file_dir = 'F:\\error_samples\\S001C001P002R002A010_34'
 
 fx = 365.481

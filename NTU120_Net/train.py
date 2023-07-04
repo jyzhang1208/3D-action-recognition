@@ -24,7 +24,7 @@ def main(args=None):
 	parser = argparse.ArgumentParser(description = "Training")
 
 	parser.add_argument('--batchSize', type=int, default=24, help='input batch size')
-	parser.add_argument('--nepoch', type=int, default=50, help='number of epochs to train for')
+	parser.add_argument('--nepoch', type=int, default=8, help='number of epochs to train for')
 	parser.add_argument('--INPUT_FEATURE_NUM', type=int, default = 8,  help='number of input point features')
 	parser.add_argument('--temperal_num', type=int, default = 3,  help='number of input point features')
 	parser.add_argument('--pooling', type=str, default='concatenation', help='how to aggregate temporal split features: vlad | concatenation | bilinear')
@@ -105,7 +105,8 @@ def main(args=None):
 	criterion = torch.nn.CrossEntropyLoss().cuda()
 	optimizer = torch.optim.Adam(netR.parameters(), lr=opt.learning_rate, betas = (0.5, 0.999), eps=1e-06)
 	scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
-
+	total_loss=[]
+	total_acc=[]
 	for epoch in range(opt.nepoch):
 		scheduler.step(epoch)
 		
@@ -158,10 +159,12 @@ def main(args=None):
 		
 		acc_avg = acc/total1
 		loss_avg = loss_sigma/total1
+		total_loss.append(loss_avg)
+		total_acc.append(acc_avg)
 		print('======>>>>> Online epoch: #%d, lr=%f,Acc=%f,avg_loss=%f  <<<<<======' %(epoch, scheduler.get_lr()[0],acc_avg,loss_avg))
 		#print("Epoch: " + str(epoch) + " Iter: " + str(i) + " Acc: " + ("%.2f" % acc_avg) +" Classification Loss: " + str(loss_avg))
 			
-		if epoch>5:
+		if epoch>10:
 			# evaluate mode
 			torch.cuda.synchronize()
 			netR.eval()

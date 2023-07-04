@@ -7,7 +7,7 @@ import mayavi.mlab
 #file_dir = 'D:\\MY_Paper\\3ddi\\pointclouddemo\\S001C001P001R001A058'
 # file_dir = 'D:\\MY_Paper\\3ddi\\pointclouddemo\\S026C002P076R002A098'
 # file_dir = 'D:\\MY_Paper\\3ddi\\data_depth\\Make_OK_sign\\S025C003P068R001A071'
-file_dir = '/home/zjy/3DV-Action/data/Drink/S001C001P001R001A001'
+file_dir = '/home/zjy/3DV-Action/data/train_data/wear_hat/S001C001P001R001A020'
 #file_dir = 'D:\\MY_Paper\\3ddi\\data_depth\\Move_object\\S019C003P051R002A092'
 fx = 365.481
 fy = 365.481

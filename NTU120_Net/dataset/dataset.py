@@ -141,7 +141,7 @@ class NTU_RGBD(Dataset):
 		self.point_data = []
 		for cloud_idx in tqdm(range(self.num_clouds), "Getting video info"):
 			self.point_data.append(self.get_pointdata(cloud_idx))
-
+		# import pdb;pdb.set_trace()
 		return self.point_data
 
 	def get_pointdata(self, vid_id):

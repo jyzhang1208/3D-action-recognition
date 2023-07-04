@@ -13,7 +13,7 @@ import numpy as np
 
 from model import PointNet_Plus#,Attension_Point,TVLAD
 from dataset import NTU_RGBD
-from utils import group_points,group_points_pro
+from utils import group_points,group_points_3DV
 
 from PIL import Image
 from torch.utils.data import Dataset
@@ -29,7 +29,7 @@ def main(args=None):
 	parser.add_argument('--INPUT_FEATURE_NUM', type=int, default = 8,  help='number of input point features')
 	parser.add_argument('--temperal_num', type=int, default = 3,  help='number of input point features')
 	parser.add_argument('--pooling', type=str, default='concatenation', help='how to aggregate temporal split features: vlad | concatenation | bilinear')
-	parser.add_argument('--dataset', type=str, default='ntu60', help='how to aggregate temporal split features: ntu120 | ntu60')
+	parser.add_argument('--dataset', type=str, default='ntu120', help='how to aggregate temporal split features: ntu120 | ntu60')
 
 
 	parser.add_argument('--weight_decay', type=float, default=0.0008, help='weight decay (SGD only)')
@@ -37,9 +37,9 @@ def main(args=None):
 	parser.add_argument('--momentum', type=float, default=0.9, help='momentum (SGD only)')
 	parser.add_argument('--workers', type=int, default=0, help='number of data loading workers')
 
-	parser.add_argument('--root_path', type=str, default='/data/data3/wangyancheng/pointcloudData/NTU_voxelz40_feature_2048',  help='preprocess folder')
-	parser.add_argument('--depth_path', type=str, default='/data/data3/wangyancheng/ntu120dataset/',  help='raw_depth_png')
-	parser.add_argument('--save_root_dir', type=str, default='results_ntu120/NTU60_v40_cv_MultiStream',  help='output folder')
+	parser.add_argument('--root_path', type=str, default='/home/zjy/3DV-Action/3DV_pointdata/NTU_voxelsize35_split5/',  help='preprocess folder')
+	parser.add_argument('--depth_path', type=str, default='/home/zjy/3DV-Action/data/train_data',  help='raw_depth_png')
+	parser.add_argument('--save_root_dir', type=str, default='/home/zjy/3DV-Action/results_ntu120/NTU60_v40_cv_notransform_MultiStream',  help='output folder')
 	parser.add_argument('--model', type=str, default = '',  help='model name for training resume')
 	parser.add_argument('--optimizer', type=str, default = '',  help='optimizer name for training resume')
 	
@@ -73,7 +73,7 @@ def main(args=None):
 	except OSError:
 		pass
 
-	os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
+	os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 	torch.backends.cudnn.benchmark = True
 	#torch.backends.cudnn.deterministic = True
@@ -92,7 +92,7 @@ def main(args=None):
 
 	netR = PointNet_Plus(opt)
 
-	netR.load_state_dict(torch.load("/results_ntu120/NTU60_v40_cv_MultiStream/pointnet_para_45.pth"))
+	netR.load_state_dict(torch.load("/home/zjy/3DV-Action/results_ntu120/NTU60_v40_cv_notransform_MultiStream/pointnet_para_40.pth"))
 
 	netR = torch.nn.DataParallel(netR).cuda()
 	netR.cuda()
@@ -118,7 +118,7 @@ def main(args=None):
 		#print(label,'label')
 		# points: B*2048*4; target: B*1
 		opt.ball_radius = opt.ball_radius + random.uniform(-0.02,0.02)
-		xt, yt = group_points_pro(points_xyzc, opt)
+		xt, yt = group_points_3DV(points_xyzc, opt)
 		xs1, ys1 = group_points(points_1xyz, opt)
 		xs2, ys2 = group_points(points2_xyz, opt)
 		xs3, ys3 = group_points(points3_xyz, opt)
@@ -143,7 +143,7 @@ def main(args=None):
 				conf_mat60[cate_i, pre_i60] += 1.0
 
 	print('NTU120:{:.2%} NTU60:{:.2%}===Average loss:{:.6%}'.format(conf_mat.trace() / conf_mat.sum(),conf_mat60.trace() / conf_mat60.sum(),loss_sigma/(i+1)/2))
-	logging.info('{} --epoch{} set Accuracy:{:.2%}===Average loss:{}'.format('Valid', epoch, conf_mat.trace() / conf_mat.sum(), loss_sigma/(i+1)))
+	logging.info('{} --epoch{} set Accuracy:{:.2%}===Average loss:{}'.format('Valid', nepoch, conf_mat.trace() / conf_mat.sum(), loss_sigma/(i+1)))
 
 		#torch.save(netR.module.state_dict(), '%s/pointnet_para_%d.pth' % (opt.save_root_dir, epoch))
 if __name__ == '__main__':
